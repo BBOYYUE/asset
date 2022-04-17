@@ -1,0 +1,11 @@
+{
+    "name": "bboyyue\/asset",
+    "description": "Package description here.",
+    "license": "MIT",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Bboyyue\\Asset\\": "src"
+        }
+    }
+}
