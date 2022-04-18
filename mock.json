@@ -1,0 +1,95 @@
+{
+  "product": {
+    "id": 1,
+    "name": "保利锦上",
+    "files": [],
+    "customers": [],
+    "users": [],
+    "visits": {},
+    "rooms": [],
+    "project": [
+      {
+        "id": 1,
+        "name": "微沙盘",
+        "files": [],
+        "option": {},
+        "modules": [
+          {
+            "id": 1,
+            "name": "全景模块",
+            "files": [],
+            "type": "panorama",
+            "option": {},
+            "works": [
+              {
+                "id": 1,
+                "name": "125户型",
+                "option": {
+                  "maps": {
+                    "url": "",
+                    "spots": []
+                  }
+                },
+                "files": [],
+                "assets": [
+                  {
+                    "id": 1,
+                    "name": "厨房",
+                    "option": {
+                      "hotspot": [],
+                      "hotspotGroup": [],
+                      "views": {}
+                    },
+                    "files": [
+                      {
+                        "name": "厨房.jpg"
+                      },
+                      {
+                        "name": "厨房.xml"
+                      },
+                      {
+                        "name": "厨房_thumb.jpg"
+                      },
+                      {
+                        "name": "厨房_thumb.tile"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "平面模块",
+            "type": "design",
+            "option": {},
+            "works": [
+              {
+                "id": 2,
+                "name": "户型鉴赏",
+                "option": {
+                  "background": ""
+                },
+                "files": [],
+                "assets": [
+                  {
+                    "id": 2,
+                    "name": "图层a",
+                    "option": {
+                      "position": [],
+                      "class": [],
+                      "onClick": [],
+                      "size": []
+                    },
+                    "files": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
