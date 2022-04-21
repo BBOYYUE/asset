@@ -1,5 +1,5 @@
 {
-  "product": {
+  "project": {
     "id": 1,
     "name": "保利锦上",
     "files": [],
@@ -7,7 +7,7 @@
     "users": [],
     "visits": {},
     "rooms": [],
-    "project": [
+    "product": [
       {
         "id": 1,
         "name": "微沙盘",

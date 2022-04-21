@@ -1,0 +1,45 @@
+<?php
+
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateAssetTable extends Migration
+
+{
+    /**
+     * 运行迁移
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('assets', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->json('option');
+            $table->tinyInteger('work_type')->comment("资源类型 逻辑资源, 实体资源");
+            $table->tinyInteger('asset_type')->comment("作品类型 全景,平面,户模,序列帧");
+            $table->tinyInteger('status')->comment("当前状态");
+            $table->unsignedInteger('order')->comment("排序字段");
+            $table->string('uuid')->comment("一个基本上不可能重复的唯一标识符");
+            $table->string('alias')->comment("一个随机的英文名");
+            $table->bigInteger('parent_id')->default(0)->comment('父级id');
+            $table->bigInteger('user_id')->default(0)->comment('作者id');
+            $table->bigInteger('group_id')->default(0)->comment('作者用户组');
+            $table->timestamps();
+            $table->softDeletes($column = 'deleted_at', $precision = 0);
+        });
+    }
+
+    /**
+     * 回滚迁移
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('assets');
+    }
+}
