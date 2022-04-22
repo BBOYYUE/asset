@@ -42,8 +42,11 @@ class RedisUtil
      */
     static function moveLastWaitToPending()
     {
-        $pending = Redis::brpoplpush(config('bboyyue-asset.redis.waiting'), config('bboyyue-asset.redis.pending'));
+        $pending = Redis::brpoplpush(config('bboyyue-asset.redis.waiting'), config('bboyyue-asset.redis.pending'), 1);
+        echo "正在处理". $pending. " \t\n";
         self::addWorking($pending, 0);
+        $info = Redis::get(config('bboyyue-asset.redis.info'), $pending);
+        SocketUtil::sendInfo($info);
     }
 
     /**
@@ -56,10 +59,10 @@ class RedisUtil
         Redis::zadd(config('bboyyue-asset.redis.working'), $time, $key);
     }
 
-    static function incrWorking($time){
+    static function incrByDegreesWorking($time){
         $list = Redis::zrange(config('bboyyue-asset.redis.working'), 0 , '-1');
         foreach ($list as $val){
-            self::addWorking($val, $time);
+            Redis::zincrby(config('bboyyue-asset.redis.working'), 5, $val);
         }
     }
     static function removeWorking($key)
@@ -72,7 +75,7 @@ class RedisUtil
      */
     static function movePendingToSuccess()
     {
-        Redis::brpoplpush(config('bboyyue-asset.redis.pending'), config('bboyyue-asset.redis.success'));
+        Redis::brpoplpush(config('bboyyue-asset.redis.pending'), config('bboyyue-asset.redis.success'), 1);
     }
 
     /**
@@ -80,6 +83,6 @@ class RedisUtil
      */
     static function movePendingToFailed()
     {
-        Redis::brpoplpush(config('bboyyue-asset.redis.pending'), config('bboyyue-asset.redis.failed')) ;
+        Redis::brpoplpush(config('bboyyue-asset.redis.pending'), config('bboyyue-asset.redis.failed'), 1) ;
     }
 }

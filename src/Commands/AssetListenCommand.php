@@ -3,7 +3,8 @@
 
 namespace Bboyyue\Asset\Commands;
 
-
+use Swoole\Process\Manager;
+use Swoole\Process\Pool;
 use Illuminate\Console\Command;
 
 class AssetListenCommand extends Command
@@ -13,7 +14,7 @@ class AssetListenCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'asset:listen {drive?}';
+    protected $signature = 'asset:listen';
 
     /**
      * 命令描述
@@ -70,12 +71,6 @@ class AssetListenCommand extends Command
                 );
             } catch (\Exception $e) {
                 echo $e->__toString();
-                $pool->write(
-                    json_encode([
-                        'code' => 500,
-                        'msg' => $e->__toString()
-                    ])
-                );
             }
         });
         $pool->listen($host, $port);
