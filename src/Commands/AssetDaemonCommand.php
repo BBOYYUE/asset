@@ -7,7 +7,8 @@ use Bboyyue\Asset\Util\RedisUtil;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Console\Command;
 
-class AssetDaemonCommand extends Command
+class
+AssetDaemonCommand extends Command
 {
     /**
      * 命令名称及签名
