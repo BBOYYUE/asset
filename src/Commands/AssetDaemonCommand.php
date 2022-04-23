@@ -15,7 +15,7 @@ AssetDaemonCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'asset:daemon {drive?}';
+    protected $signature = 'asset:daemon';
 
     /**
      * 命令描述
@@ -41,29 +41,40 @@ AssetDaemonCommand extends Command
      */
     public function handle()
     {
-        while(true){
-            $this->checkPendingJob(1);
+        echo "服务已启动 \t\n";
+        while (true) {
+            $this->checkPendingJob();
             $this->addWork();
-            RedisUtil::incrWorking(5);
+            RedisUtil::incrByDegreesWorking(5);
+            sleep(5);
         }
     }
 
-    protected function addWork(){
+    protected function addWork()
+    {
         /**
          * 获取当前正在进行的任务数量, 如果小于最大处理条数的话, 就将 pending 最后一项移到处理中
          */
+
         $len = Redis::llen(config('bboyyue-asset.redis.pending'));
-        for($i=0; $i < 3 - $len; $i++){
-            RedisUtil::moveLastWaitToPending();
+        for ($i = 0; $i < 3 - $len; $i++) {
+            if (Redis::llen(config('bboyyue-asset.redis.waiting')) > 0) {
+                if (3 - $len > 0) {
+                    echo "将等待中的任务移入操作中队列 \t\n";
+                }
+                RedisUtil::moveLastWaitToPending();
+            }
         }
     }
 
-    protected function checkPendingJob($index){
+    protected function checkPendingJob()
+    {
+        echo "校验正在进行中的任务进度 \t\n";
         $len = Redis::llen(config('bboyyue-asset.redis.pending'));
-        $pending = Redis::lindex(config('bboyyue-asset.redis.pending'), $len - $index);
-        $time = Redis::hget(config('bboyyue-asset.redis.working'), $pending);
-        $progress = Redis::zscore(config('bboyyue-asset.redis.progress'),$pending);
-        if($progress === 100){
+        $pending = Redis::lindex(config('bboyyue-asset.redis.pending'), $len - 1);
+        $time = Redis::zscore(config('bboyyue-asset.redis.working'), $pending);
+        $progress = Redis::zscore(config('bboyyue-asset.redis.progress'), $pending);
+        if ($progress == 100) {
             /**
              * 将最后一项移出到成功列表
              */
@@ -75,8 +86,8 @@ AssetDaemonCommand extends Command
             /**
              * 判断下一项
              */
-            $this->checkPendingJob($index + 1);
-        }elseif($time > config('bboyyue-asset.redis.timeout')){
+            $this->checkPendingJob();
+        } elseif ($time > config('bboyyue-asset.redis.timeout')) {
             /**
              * 将最后一项移出到失败列表
              */
@@ -88,7 +99,7 @@ AssetDaemonCommand extends Command
             /**
              * 判断下一项
              */
-            $this->checkPendingJob($index + 1);
+            $this->checkPendingJob();
         }
         /**
          * 如果当前项既没有成功, 也没有超时, 那么终止递归

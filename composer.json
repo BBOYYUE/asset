@@ -14,5 +14,12 @@
         "psr-4": {
             "Bboyyue\\Asset\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bboyyue\\Asset\\ServiceProvider"
+            ]
+        }
     }
 }

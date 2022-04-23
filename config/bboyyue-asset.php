@@ -6,9 +6,9 @@ return [
     "job"=> "asset_job",
     "command"=> [
         'listen' => [
-            "host"=> "",
-            "port"=> "",
-            "maxProcesses"=> ""
+            "host"=> "127.0.0.1",
+            "port"=> "9505",
+            "maxProcesses"=> "4"
         ]
     ],
     "service" => [
@@ -31,7 +31,7 @@ return [
         "waiting" => "asset_waiting",
 
         /**
-         * pending
+         * pending 是一个列表
          */
         "pending" => "asset_pending",
 
