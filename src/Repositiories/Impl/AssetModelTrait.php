@@ -6,7 +6,7 @@ namespace Bboyyue\Asset\Repositiories\Impl;
 
 use Bboyyue\Asset\Repositiories\Interfaces\AssetModelInterface;
 
-class AssetModelTrait implements AssetModelInterface
+trait AssetModelTrait
 {
 
     function addAsset($asset)

@@ -4,11 +4,10 @@
 namespace Bboyyue\Asset\Commands;
 
 use Bboyyue\Asset\Util\RedisUtil;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Redis;
 
-class
-AssetDaemonCommand extends Command
+class AssetDaemonCommand extends Command
 {
     /**
      * 命令名称及签名
@@ -50,23 +49,6 @@ AssetDaemonCommand extends Command
         }
     }
 
-    protected function addWork()
-    {
-        /**
-         * 获取当前正在进行的任务数量, 如果小于最大处理条数的话, 就将 pending 最后一项移到处理中
-         */
-
-        $len = Redis::llen(config('bboyyue-asset.redis.pending'));
-        for ($i = 0; $i < 3 - $len; $i++) {
-            if (Redis::llen(config('bboyyue-asset.redis.waiting')) > 0) {
-                if (3 - $len > 0) {
-                    echo "将等待中的任务移入操作中队列 \t\n";
-                }
-                RedisUtil::moveLastWaitToPending();
-            }
-        }
-    }
-
     protected function checkPendingJob()
     {
         echo "校验正在进行中的任务进度 \t\n";
@@ -104,5 +86,22 @@ AssetDaemonCommand extends Command
         /**
          * 如果当前项既没有成功, 也没有超时, 那么终止递归
          */
+    }
+
+    protected function addWork()
+    {
+        /**
+         * 获取当前正在进行的任务数量, 如果小于最大处理条数的话, 就将 pending 最后一项移到处理中
+         */
+
+        $len = Redis::llen(config('bboyyue-asset.redis.pending'));
+        for ($i = 0; $i < 3 - $len; $i++) {
+            if (Redis::llen(config('bboyyue-asset.redis.waiting')) > 0) {
+                if (3 - $len > 0) {
+                    echo "将等待中的任务移入操作中队列 \t\n";
+                }
+                RedisUtil::moveLastWaitToPending();
+            }
+        }
     }
 }

@@ -3,9 +3,10 @@
 
 namespace Bboyyue\Asset\Commands;
 
+use Exception;
+use Illuminate\Console\Command;
 use Swoole\Process\Manager;
 use Swoole\Process\Pool;
-use Illuminate\Console\Command;
 
 class AssetListenCommand extends Command
 {
@@ -57,7 +58,7 @@ class AssetListenCommand extends Command
             $pool->workerId = $workerId;
         });
 
-        $pool->on("Message", function ($pool, $message) use($host, $port, $service) {
+        $pool->on("Message", function ($pool, $message) use ($host, $port, $service) {
             try {
                 $data = json_decode($message);
                 $method = $data->method;
@@ -66,10 +67,10 @@ class AssetListenCommand extends Command
                     json_encode([
                         'code' => 200,
                         'msg' => 'ok!',
-                        'body' => $service::run($data->body,  $pool->workerId)
+                        'body' => $service::run($data->body, $pool->workerId)
                     ])
                 );
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo $e->__toString();
             }
         });
