@@ -60,12 +60,12 @@ interface AssetModelInterface
      * 自动获取模型下的资源并进行生成操作
      * @return mixed
      */
-    function generate();
+    function generate($method = 'generate');
 
     /**
      * 子资源进行生成操作
      * @param $child
      * @return mixed
      */
-    function childGenerate($child);
+    function childGenerate($child, $method = 'generate');
 }

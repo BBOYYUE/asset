@@ -62,9 +62,12 @@ class AssetDaemonCommand extends Command
              */
             RedisUtil::movePendingToSuccess();
             /**
-             * 移除计时器
+             * 移除进度条和计时器, 避免第二次生成时发生错误
              */
+            RedisUtil::removeProgress($pending);
             RedisUtil::removeWorking($pending);
+            RedisUtil::removeInfo($pending);
+            RedisUtil::removeInterceptor($pending);
             /**
              * 判断下一项
              */
@@ -77,7 +80,10 @@ class AssetDaemonCommand extends Command
             /**
              * 移除计时器
              */
+            RedisUtil::removeProgress($pending);
             RedisUtil::removeWorking($pending);
+            RedisUtil::removeInfo($pending);
+            RedisUtil::removeInterceptor($pending);
             /**
              * 判断下一项
              */
@@ -91,7 +97,7 @@ class AssetDaemonCommand extends Command
     protected function addWork()
     {
         /**
-         * 获取当前正在进行的任务数量, 如果小于最大处理条数的话, 就将 pending 最后一项移到处理中
+         * 获取当前正在进行的任务数量, 如果小于最大处理条数的话, 就将 waiting 最后一项移到处理中
          */
 
         $len = Redis::llen(config('bboyyue-asset.redis.pending'));
@@ -100,7 +106,11 @@ class AssetDaemonCommand extends Command
                 if (3 - $len > 0) {
                     echo "将等待中的任务移入操作中队列 \t\n";
                 }
-                RedisUtil::moveLastWaitToPending();
+                if(!in_array(RedisUtil::getWaitingLast(), RedisUtil::getInterceptor())) {
+                    RedisUtil::moveLastWaitToPending();
+                }else{
+                    RedisUtil::moveLastWaitToWait();
+                }
             }
         }
     }

@@ -5,16 +5,18 @@ namespace Bboyyue\Asset\Model;
 
 use Bboyyue\Asset\Repositiories\Impl\AssetModelTrait;
 use Bboyyue\Asset\Repositiories\Interfaces\AssetModelInterface;
+use Bboyyue\Filesystem\Model\FilesystemModel;
 use Bboyyue\Filesystem\Repositiories\Interfaces\FilesystemTraitInterface;
 use BenSampo\Enum\Traits\CastsEnums;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Spatie\Tags\HasTags;
 use Bboyyue\Filesystem\Repositiories\Impl\FilesystemTrait;
 
 
-class Asset extends Model implements FilesystemTraitInterface, AssetModelInterface
+class Asset extends Model implements Sortable, FilesystemTraitInterface, AssetModelInterface
 {
     use HasFactory, HasTags, SortableTrait, CastsEnums, FilesystemTrait, AssetModelTrait;
 
@@ -50,5 +52,15 @@ class Asset extends Model implements FilesystemTraitInterface, AssetModelInterfa
     public function buildSortQuery()
     {
         return static::query()->where('parent_id', $this->parent_id);
+    }
+
+    public function filesystem(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(FilesystemModel::class, 'model_id','id');
+    }
+
+    public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id', 'id');
     }
 }

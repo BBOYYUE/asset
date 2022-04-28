@@ -5,37 +5,69 @@ namespace Bboyyue\Asset\Repositiories\Facades;
 
 
 use Bboyyue\Asset\Repositiories\Interfaces\AssetFacadeInterface;
+use Bboyyue\Asset\Util\RedisUtil;
+use Illuminate\Support\Str;
 
 class Asset implements AssetFacadeInterface
 {
 
-    function createAsset($name, $option = [])
+    static function createAsset($name, $work_type = 0, $asset_type = 0, $option = [])
     {
-        // TODO: Implement createAsset() method.
+        $uuid = Str::uuid();
+        $asset = new \Bboyyue\Asset\Model\Asset();
+        $asset->name = $name;
+        $asset->option = json_encode($option);
+        $asset->work_type = $work_type;
+        $asset->asset_type = $asset_type;
+        $asset->status = 0;
+        $asset->uuid = $uuid;
+        $asset->alias = Str::before($uuid, '-');
+        $asset->save();
+        return $asset;
     }
 
-    function removeAsset($asset)
+    static function removeAsset($asset)
     {
-        // TODO: Implement removeAsset() method.
+        $asset->delete();
     }
 
-    function renameAsset($asset, $name)
+    static function renameAsset($asset, $name)
     {
-        // TODO: Implement renameAsset() method.
+        $asset->name = $name;
+        $asset->save();
+        return $asset;
     }
 
-    function setOptionAsset($asset, $option)
+    static function setOptionAsset($asset, $option)
     {
-        // TODO: Implement setOptionAsset() method.
+        $asset->option = json_encode($option);
+        return $asset;
     }
 
-    function setTag($asset, $tag)
+    static function setTag($asset, $tag)
     {
         // TODO: Implement setTag() method.
     }
 
-    function generate($asset)
+    static function generate($asset)
     {
-        // TODO: Implement generate() method.
+        if ($asset->children->count() > 0) {
+            foreach ($asset->children as $child) {
+                self::generate($child);
+            }
+        }
+        if (RedisUtil::getWaitingLen() >= config('bboyyue-asset.redis.max_waiting_len')) {
+            throw new \Exception('排队数量过多');
+        }
+        $info = [
+            'name' => $asset->name,
+            'id' => $asset->id,
+            'asset_type' => $asset->asset_type,
+            'work_type' => $asset->work_type,
+            'uuid' => $asset->uuid
+        ];
+        RedisUtil::addWaiting($asset->uuid);
+        RedisUtil::setInfo($asset->uuid, $info);
+        return $asset;
     }
 }
