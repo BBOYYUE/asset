@@ -27,8 +27,7 @@ class KrpanoUtil
 
     static public function setPanoramaNameAndTitle($xmlPath, $name)
     {
-        $fo = fopen($xmlPath, 'r');
-        $xml = fread($fo, filesize($xmlPath));
+        $xml = file_get_contents($xmlPath);
         $array = XML2Array::createArray($xml);
         $array['krpano']['scene']['@attributes']['name']  = "scene_". $name;
         $array['krpano']['scene']['@attributes']['title']  = $name;
@@ -38,8 +37,7 @@ class KrpanoUtil
     }
     static public function setPanoramaTilesPath($xmlPath, $tilePath)
     {
-        $fo = fopen($xmlPath, 'r');
-        $xml = fread($fo, filesize($xmlPath));
+        $xml = file_get_contents($xmlPath);
         $array = XML2Array::createArray($xml);
         $array['krpano']['scene']['@attributes']['thumburl'] = '../'.$tilePath. "/thumb.jpg";
         $array['krpano']['scene']['preview']['@attributes']['url'] = '../'.$tilePath. "/preview.jpg";

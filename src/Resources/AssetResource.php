@@ -6,13 +6,15 @@ namespace Bboyyue\Asset\Resources;
 
 use Bboyyue\Asset\Enum\AssetTypeEnum;
 use Bboyyue\Asset\Enum\PanoramaTypeEnum;
+use Bboyyue\Asset\Enum\ThreeTypeEnum;
 use Bboyyue\Asset\Repositiories\Impl\PanoramaResource;
+use Bboyyue\Asset\Repositiories\Impl\ThreeResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 
 class AssetResource extends JsonResource
 {
-    use PanoramaResource;
+    use PanoramaResource, ThreeResource;
     const RESOURCE_IMPL = [
         AssetTypeEnum::PANORAMA => [
             PanoramaTypeEnum::WORK => 'panoramaWorkResource',
@@ -23,7 +25,9 @@ class AssetResource extends JsonResource
 
         ],
         AssetTypeEnum::THREE => [
-
+            ThreeTypeEnum::WORK => 'threeWorkResource',
+            ThreeTypeEnum::ASSET => 'threeResource',
+            ThreeTypeEnum::DIR => 'threeDirResource'
         ],
         AssetTypeEnum::SEQUENCE => [
 

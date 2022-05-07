@@ -1,6 +1,7 @@
 <?php
 
 
+use Bboyyue\Asset\Enum\ThreeTypeEnum;
 use Bboyyue\Asset\Repositiories\Services\Panorama\GeneratePanoramaDirXmlService;
 use Bboyyue\Asset\Repositiories\Services\Panorama\GeneratePanoramaService;
 use Bboyyue\Asset\Repositiories\Services\Panorama\GeneratePanoramaWorkXmlService;
@@ -11,6 +12,7 @@ use Bboyyue\Asset\Repositiories\Services\Panorama\RefreshPanoramaService;
 use Bboyyue\Asset\Repositiories\Services\Panorama\RefreshPanoramaWorkService;
 use Bboyyue\Asset\Repositiories\Services\Panorama\RefreshPanoramaWorkXmlService;
 use Bboyyue\Asset\Repositiories\Services\Panorama\RefreshPanoramaXmlService;
+use Bboyyue\Asset\Repositiories\Services\Three\GenerateThreeService;
 
 return [
     "job" => "asset_job",
@@ -29,7 +31,6 @@ return [
                 \Bboyyue\Asset\Enum\PanoramaTypeEnum::WORK => GeneratePanoramaWorkXmlService::class,
                 \Bboyyue\Asset\Enum\PanoramaTypeEnum::DIR => GeneratePanoramaDirXmlService::class,
             ],
-            "generateThumb" => [],
             "generateXml" => [
                 \Bboyyue\Asset\Enum\PanoramaTypeEnum::ASSET => GeneratePanoramaXmlService::class,
                 \Bboyyue\Asset\Enum\PanoramaTypeEnum::WORK => GeneratePanoramaWorkXmlService::class,
@@ -44,6 +45,13 @@ return [
                 \Bboyyue\Asset\Enum\PanoramaTypeEnum::ASSET => RefreshPanoramaXmlService::class,
                 \Bboyyue\Asset\Enum\PanoramaTypeEnum::WORK => RefreshPanoramaWorkXmlService::class,
                 \Bboyyue\Asset\Enum\PanoramaTypeEnum::DIR => RefreshPanoramaDirXmlService::class,
+            ]
+        ],
+        \Bboyyue\Asset\Enum\AssetTypeEnum::THREE => [
+            "generate" => [
+                \Bboyyue\Asset\Enum\ThreeTypeEnum::ASSET => GenerateThreeService::class,
+                \Bboyyue\Asset\Enum\ThreeTypeEnum::WORK => GenerateThreeService::class,
+                \Bboyyue\Asset\Enum\ThreeTypeEnum::DIR => GenerateThreeService::class,
             ]
         ]
     ],
