@@ -18,6 +18,7 @@ class AssetResource extends JsonResource
     const RESOURCE_IMPL = [
         AssetTypeEnum::PANORAMA => [
             PanoramaTypeEnum::WORK => 'panoramaWorkResource',
+            PanoramaTypeEnum::GROUP=> 'panoramaGroupResource',
             PanoramaTypeEnum::ASSET => 'panoramaResource',
             PanoramaTypeEnum::DIR => 'panoramaDirResource'
         ],

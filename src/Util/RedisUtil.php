@@ -7,6 +7,7 @@ namespace Bboyyue\Asset\Util;
 use Illuminate\Support\Facades\Redis;
 
 /**
+ * Bboyyue\Asset\Util\RedisUtil
  * 一些常用操作
  * waiting, pending, progress, success, failed, working, info
  * Illuminate\Support\Facades\Redis::lrange(config('bboyyue-asset.redis.waiting'), 0 ,-1);

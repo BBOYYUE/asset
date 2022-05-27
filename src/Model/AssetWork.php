@@ -5,6 +5,8 @@ namespace Bboyyue\Asset\Model;
 
 use Bboyyue\Asset\Repositiories\Impl\AssetModelTrait;
 use Bboyyue\Asset\Repositiories\Interfaces\AssetModelInterface;
+use Bboyyue\Asset\Scope\AssetFolderScope;
+use Bboyyue\Asset\Scope\AssetWorkScope;
 use Bboyyue\Filesystem\Model\FilesystemModel;
 use Bboyyue\Filesystem\Repositiories\Interfaces\FilesystemTraitInterface;
 use BenSampo\Enum\Traits\CastsEnums;
@@ -16,7 +18,7 @@ use Spatie\Tags\HasTags;
 use Bboyyue\Filesystem\Repositiories\Impl\FilesystemTrait;
 
 
-class Asset extends Model implements Sortable, FilesystemTraitInterface, AssetModelInterface
+class AssetWork extends Model implements Sortable, FilesystemTraitInterface, AssetModelInterface
 {
     use HasFactory, HasTags, SortableTrait, CastsEnums, FilesystemTrait, AssetModelTrait;
     protected $table = 'assets';
@@ -45,6 +47,12 @@ class Asset extends Model implements Sortable, FilesystemTraitInterface, AssetMo
     ];
 
 
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new AssetWorkScope());
+    }
+
     /**
      * 在排序时按照某个字段进行分组
      * @return mixed
@@ -54,23 +62,8 @@ class Asset extends Model implements Sortable, FilesystemTraitInterface, AssetMo
         return static::query()->where('parent_id', $this->parent_id);
     }
 
-
-    public function filesystem(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function parent()
     {
-        return $this->hasMany(FilesystemModel::class, 'model_id','id');
-    }
-
-    public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(self::class, 'parent_id', 'id');
-    }
-
-    public function folders(){
-        return $this->hasMany(AssetFolder::class, 'parent_id', 'id');
-//        return $this->morphMany(self::class, 'parent');
-//        return $this->hasMany(self::class, 'parent_id', 'id');
-    }
-    public function works(){
-        return $this->hasMany(AssetWork::class, 'parent_id', 'id');
+        return $this->morphTo(__FUNCTION__, 'asset_type', 'parent_id');
     }
 }

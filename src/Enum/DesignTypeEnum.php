@@ -9,7 +9,11 @@ class DesignTypeEnum extends Enum
 {
     const WORK = 1;
 
-    const PAGE = 2;
+    const ASSET = 2;
 
-    const LAYER = 3;
+    const DIR = 3;
+
+    const PAGE = 4;
+
+    const LAYER = 5;
 }
