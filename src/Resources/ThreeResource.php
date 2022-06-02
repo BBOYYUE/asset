@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Bboyyue\Asset\Repositiories\Impl;
+namespace Bboyyue\Asset\Resources;
 
 
 use Bboyyue\Asset\Resources\AssetResource;

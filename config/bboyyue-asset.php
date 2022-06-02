@@ -25,33 +25,33 @@ return [
     ],
 
     "service" => [
-        \Bboyyue\Asset\Enum\AssetTypeEnum::PANORAMA => [
+        \Bboyyue\Asset\Enum\WorkTypeEnum::PANORAMA => [
             "generate" => [
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::ASSET => GeneratePanoramaService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::WORK => GeneratePanoramaWorkXmlService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::DIR => GeneratePanoramaDirXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::ASSET => GeneratePanoramaService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::WORK => GeneratePanoramaWorkXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::DIR => GeneratePanoramaDirXmlService::class,
             ],
             "generateXml" => [
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::ASSET => GeneratePanoramaXmlService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::WORK => GeneratePanoramaWorkXmlService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::DIR => GeneratePanoramaDirXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::ASSET => GeneratePanoramaXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::WORK => GeneratePanoramaWorkXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::DIR => GeneratePanoramaDirXmlService::class,
             ],
             "refresh" => [
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::ASSET => RefreshPanoramaService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::WORK => RefreshPanoramaWorkService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::DIR => RefreshPanoramaDirService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::ASSET => RefreshPanoramaService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::WORK => RefreshPanoramaWorkService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::DIR => RefreshPanoramaDirService::class,
             ],
             "refreshXml" => [
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::ASSET => RefreshPanoramaXmlService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::WORK => RefreshPanoramaWorkXmlService::class,
-                \Bboyyue\Asset\Enum\PanoramaTypeEnum::DIR => RefreshPanoramaDirXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::ASSET => RefreshPanoramaXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::WORK => RefreshPanoramaWorkXmlService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::DIR => RefreshPanoramaDirXmlService::class,
             ]
         ],
-        \Bboyyue\Asset\Enum\AssetTypeEnum::THREE => [
+        \Bboyyue\Asset\Enum\WorkTypeEnum::THREE => [
             "generate" => [
-                \Bboyyue\Asset\Enum\ThreeTypeEnum::ASSET => GenerateThreeService::class,
-                \Bboyyue\Asset\Enum\ThreeTypeEnum::WORK => GenerateThreeService::class,
-                \Bboyyue\Asset\Enum\ThreeTypeEnum::DIR => GenerateThreeService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::ASSET => GenerateThreeService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::WORK => GenerateThreeService::class,
+                \Bboyyue\Asset\Enum\AssetTypeEnum::DIR => GenerateThreeService::class,
             ]
         ]
     ],

@@ -6,20 +6,12 @@ use BenSampo\Enum\Enum;
 
 class AssetTypeEnum extends Enum
 {
-    /**
-     * 全景
-     */
-    const PANORAMA = 1;
-    /**
-     * 平面
-     */
-    const DESIGN = 2;
-    /**
-     * 3D
-     */
-    const THREE = 3;
-    /**
-     * 序列帧
-     */
-    const SEQUENCE = 4;
+
+    const WORK = 1;
+    const ASSET = 2;
+    const DIR = 3;
+
+//    const GROUP = 4;
+//    const PAGE = 5;
+//    const LAYER = 6;
 }

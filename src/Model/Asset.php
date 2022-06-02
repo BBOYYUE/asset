@@ -67,8 +67,6 @@ class Asset extends Model implements Sortable, FilesystemTraitInterface, AssetMo
 
     public function folders(){
         return $this->hasMany(AssetFolder::class, 'parent_id', 'id');
-//        return $this->morphMany(self::class, 'parent');
-//        return $this->hasMany(self::class, 'parent_id', 'id');
     }
     public function works(){
         return $this->hasMany(AssetWork::class, 'parent_id', 'id');

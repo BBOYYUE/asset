@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class Asset implements AssetFacadeInterface
 {
 
-    static function createAsset($name, $work_type = 0, $asset_type = 0, $option = [])
+    static function createAsset($name, $work_type = 0, $asset_type = 0, $user_id = 0, $option = [])
     {
         $uuid = Str::uuid();
         $asset = new \Bboyyue\Asset\Model\Asset();
@@ -21,6 +21,7 @@ class Asset implements AssetFacadeInterface
         $asset->asset_type = $asset_type;
         $asset->status = 0;
         $asset->uuid = $uuid;
+        $asset->user_id = $user_id;
         $asset->alias = Str::before($uuid, '-');
         $asset->save();
         return $asset;

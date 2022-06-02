@@ -16,9 +16,17 @@ trait AssetModelTrait
         return $this;
     }
 
+    function remove($asset){
+        $children = $asset->children;
+        foreach ($children as $child){
+            $child->remove($child);
+        }
+        $asset->delete();
+    }
+
     function listChildAsset()
     {
-        return $this->children();
+        return $this->children;
     }
 
     function sortChildAsset($sort)

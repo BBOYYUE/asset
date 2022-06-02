@@ -5,32 +5,33 @@ namespace Bboyyue\Asset\Resources;
 
 
 use Bboyyue\Asset\Enum\AssetTypeEnum;
-use Bboyyue\Asset\Enum\PanoramaTypeEnum;
-use Bboyyue\Asset\Enum\ThreeTypeEnum;
-use Bboyyue\Asset\Repositiories\Impl\PanoramaResource;
-use Bboyyue\Asset\Repositiories\Impl\ThreeResource;
+use Bboyyue\Asset\Enum\WorkTypeEnum;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 
 class AssetResource extends JsonResource
 {
-    use PanoramaResource, ThreeResource;
+    use PanoramaResource, ThreeResource, UndefinedResource;
     const RESOURCE_IMPL = [
-        AssetTypeEnum::PANORAMA => [
-            PanoramaTypeEnum::WORK => 'panoramaWorkResource',
-            PanoramaTypeEnum::GROUP=> 'panoramaGroupResource',
-            PanoramaTypeEnum::ASSET => 'panoramaResource',
-            PanoramaTypeEnum::DIR => 'panoramaDirResource'
+        WorkTypeEnum::UNDEFINED => [
+            AssetTypeEnum::WORK => 'undefinedWorkResource',
+            AssetTypeEnum::ASSET => 'undefinedResource',
+            AssetTypeEnum::DIR => 'undefinedDirResource'
         ],
-        AssetTypeEnum::DESIGN => [
+        WorkTypeEnum::PANORAMA => [
+            AssetTypeEnum::WORK => 'panoramaWorkResource',
+            AssetTypeEnum::ASSET => 'panoramaResource',
+            AssetTypeEnum::DIR => 'panoramaDirResource'
+        ],
+        WorkTypeEnum::DESIGN => [
 
         ],
-        AssetTypeEnum::THREE => [
-            ThreeTypeEnum::WORK => 'threeWorkResource',
-            ThreeTypeEnum::ASSET => 'threeResource',
-            ThreeTypeEnum::DIR => 'threeDirResource'
+        WorkTypeEnum::THREE => [
+            AssetTypeEnum::WORK => 'threeWorkResource',
+            AssetTypeEnum::ASSET => 'threeResource',
+            AssetTypeEnum::DIR => 'threeDirResource'
         ],
-        AssetTypeEnum::SEQUENCE => [
+        WorkTypeEnum::SEQUENCE => [
 
         ]
     ];
