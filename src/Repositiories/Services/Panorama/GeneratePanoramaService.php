@@ -55,7 +55,7 @@ class GeneratePanoramaService implements AssetServiceInterface
         }while(!$tile &&! isset($tilePath));
         KrpanoUtil::setPanoramaTilesPath($xmlPath, $tilePath);
         KrpanoUtil::setPanoramaNameAndTitle($xmlPath, $asset->alias);
-
+        KrpanoUtil::savePanoramaDocument($xmlPath, $asset->uuid);
         if(is_file($xmlPath)) {
             $asset->addFilesystemData($xmlPath, ['use_type' => FilesystemDataTypeEnum::PANORAMA_XML]);
         }

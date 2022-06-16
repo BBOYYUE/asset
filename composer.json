@@ -12,7 +12,8 @@
         "bensampo/laravel-enum": "^4.2",
         "bboyyue/filesystem": "dev-master",
         "ext-json": "*",
-        "openlss/lib-array2xml": "^1.0"
+        "openlss/lib-array2xml": "^1.0",
+        "jenssegers/mongodb": "*"
     },
     "autoload": {
         "psr-4": {

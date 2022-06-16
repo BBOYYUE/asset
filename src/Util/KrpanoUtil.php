@@ -4,6 +4,7 @@
 namespace Bboyyue\Asset\Util;
 
 
+use Bboyyue\Asset\Model\MongoDb\PanoramaModel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use LSS\Array2XML;
@@ -45,5 +46,14 @@ class KrpanoUtil
         $krpano = Array2XML::createXML('krpano', $array['krpano'])->saveXML();
         $xml = Str::after($krpano, '<?xml version="1.0" encoding="UTF-8"?>');
         file_put_contents($xmlPath, $xml);
+    }
+
+    static public function savePanoramaDocument($xmlPath, $uuid)
+    {
+        $xml = file_get_contents($xmlPath);
+        $array = XML2Array::createArray($xml);
+        $uuid = (string) $uuid;
+        $array['krpano']['uuid'] = $uuid;
+        PanoramaModel::create($array);
     }
 }
