@@ -1,20 +1,20 @@
 <?php
 
+
 namespace Bboyyue\Asset\Model\MongoDb;
 
 
 use Jenssegers\Mongodb\Eloquent\Model;
 
 /**
- * Created by : PhpStorm
- * User: bboyyue
- * Email bboyyue@outlook.com
- * Date: 2022/6/11
- * Time: 19:37
+ * 使用mongoDb缓存xml文件
+ * Class PanoramaModel
+ * @package Bboyyue\Asset\Model\MongoDb
  */
+
 class PanoramaModel extends Model
 {
     protected $connection  = 'mongodb';
-    protected $collection = 'panorama_document';
+    protected $collection = 'asset_krpano';
     protected $fillable = ['krpano'];
 }

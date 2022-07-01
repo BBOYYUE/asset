@@ -14,6 +14,14 @@ interface AssetModelInterface
     function addAsset($asset);
 
     /**
+     * @param $asset
+     * @param $file_uuid
+     * @return mixed
+     */
+    function addResource($asset, $name, $file_uuid);
+
+
+    /**
      * 获取当前作品绑定的资源列表
      * @return mixed
      */
@@ -68,4 +76,13 @@ interface AssetModelInterface
      * @return mixed
      */
     function childGenerate($child, $method = 'generate');
+
+
+    /**
+     * 更新作品的资源列表缓存文档
+     * @return mixed
+     */
+    function updateResourceDocument($type = 'all');
+
+
 }

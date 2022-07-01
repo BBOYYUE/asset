@@ -14,6 +14,7 @@ interface AssetFacadeInterface
      */
     static function createAsset($name, $work_type = 0, $asset_type = 0, $option = []);
 
+
     /**
      * 删除资源
      * @param $asset
@@ -51,4 +52,10 @@ interface AssetFacadeInterface
      * @return mixed
      */
     static function generate($asset);
+
+    /**
+     * 更新作品的资源列表缓存文档
+     * @return mixed
+     */
+    function updateResourceDocument($asset, $type = 'all');
 }

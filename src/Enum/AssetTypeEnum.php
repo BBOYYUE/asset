@@ -11,7 +11,4 @@ class AssetTypeEnum extends Enum
     const ASSET = 2;
     const DIR = 3;
 
-//    const GROUP = 4;
-//    const PAGE = 5;
-//    const LAYER = 6;
 }

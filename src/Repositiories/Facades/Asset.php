@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class Asset implements AssetFacadeInterface
 {
 
-    static function createAsset($name, $work_type = 0, $asset_type = 0, $user_id = 0, $option = [])
+    static function createAsset($name, $work_type = 0, $asset_type = 0, $user_id = 0, $option = [], $resource_type = 0)
     {
         $uuid = Str::uuid();
         $asset = new \Bboyyue\Asset\Model\Asset();
@@ -70,5 +70,10 @@ class Asset implements AssetFacadeInterface
         RedisUtil::addWaiting($asset->uuid);
         RedisUtil::setInfo($asset->uuid, $info);
         return $asset;
+    }
+
+    function updateResourceDocument($asset, $type = 'all')
+    {
+        // TODO: Implement updateResourceDocument() method.
     }
 }

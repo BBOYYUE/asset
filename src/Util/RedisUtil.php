@@ -4,6 +4,7 @@
 namespace Bboyyue\Asset\Util;
 
 
+use Bboyyue\Asset\Model\Asset;
 use Illuminate\Support\Facades\Redis;
 
 /**
@@ -22,38 +23,37 @@ use Illuminate\Support\Facades\Redis;
  * Class RedisUtil
  * @package Bboyyue\Asset\Util
  */
-
 class RedisUtil
 {
 
     static function clearAll()
     {
-        for($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.pending')); $i++){
+        for ($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.pending')); $i++) {
             Redis::lpop(config('bboyyue-asset.redis.pending'));
         }
-        for($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.waiting')); $i++){
+        for ($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.waiting')); $i++) {
             Redis::lpop(config('bboyyue-asset.redis.waiting'));
         }
-        for($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.success')); $i++){
+        for ($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.success')); $i++) {
             Redis::lpop(config('bboyyue-asset.redis.success'));
         }
-        for($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.failed')); $i++){
+        for ($i = 0; $i < Redis::llen(config('bboyyue-asset.redis.failed')); $i++) {
             Redis::lpop(config('bboyyue-asset.redis.failed'));
         }
         $progress = Redis::zrange(config('bboyyue-asset.redis.progress'), 0, -1);
-        $working = Redis::zrange(config('bboyyue-asset.redis.working'), 0 , '-1');
+        $working = Redis::zrange(config('bboyyue-asset.redis.working'), 0, -1);
         $info = Redis::hgetall(config('bboyyue-asset.redis.info'));
-
-        foreach ($progress as $key => $val){
-            Redis::zrem(config('bboyyue-asset.redis.progress'), $key);
+        foreach ($progress as $key => $val) {
+            Redis::zrem(config('bboyyue-asset.redis.progress'), $val);
         }
-        foreach ($working as $key => $val){
-            Redis::zrem(config('bboyyue-asset.redis.working'), $key);
+        foreach ($working as $key => $val) {
+            Redis::zrem(config('bboyyue-asset.redis.working'), $val);
         }
-        foreach ($info as $key => $val){
+        foreach ($info as $key => $val) {
             Redis::hdel(config('bboyyue-asset.redis.info'), $key);
         }
     }
+
     /**
      * 设置某个任务的进度
      * 进度使用有序列表进行保存
@@ -102,10 +102,60 @@ class RedisUtil
         echo "任务被阻塞,所以跳过: " . $pending . " \t\n";
     }
 
+    static function getStatus($ids)
+    {
+        $status = [];
+        $working =  Redis::zrange(config('bboyyue-asset.redis.working'), 0, -1);
+        $waiting = Redis::lrange(config('bboyyue-asset.redis.waiting'), 0, -1);
+        $failed = Redis::lrange(config('bboyyue-asset.redis.failed'), 0, -1);
+        $success = Redis::lrange(config('bboyyue-asset.redis.success'), 0, -1);
+        $pending = Redis::lrange(config('bboyyue-asset.redis.pending'), 0, -1);
+        $infos = Redis::hmget(config('bboyyue-asset.redis.info'), $ids);
+
+        foreach ($ids as $id){
+            $isTask = false;
+            if(isset($infos[$id]) && $infos[$id] ){
+                $array = json_decode($infos[$id], true);
+            }else{
+                $asset = Asset::where('id', $id)->first();
+                $array = [
+                    'name' => $asset->name,
+                    'id' => $asset->id,
+                    'asset_type' => $asset->asset_type,
+                    'work_type' => $asset->work_type,
+                    'uuid' => $asset->uuid,
+                ];
+            }
+            if(in_array($id, $working)){
+                $isTask = true;
+                $array['status'] = 'working';
+                $array['progress'] = Redis::zscore(config('bboyyue-asset.redis.progress'), $id);
+            }elseif(in_array($id, $waiting)){
+                $isTask = true;
+                $array['status'] = 'waiting';
+            }elseif(in_array($id, $failed)){
+                $isTask = true;
+                $array['status'] = 'failed';
+            }elseif(in_array($id, $success)){
+                $isTask = true;
+                $array['status'] = 'success';
+            }elseif(in_array($id, $pending)){
+                $isTask = true;
+                $array['status'] = 'pending';
+            }
+            if($isTask){
+                    $array['id'] = $id;
+                    $status[] = $array;
+            }
+        }
+        return $status;
+    }
+
     /**
      * 为某个key设置计时器
      * @param $key
      * @param $time
+     * @return mixed
      */
     static function addWorking($key, $time)
     {

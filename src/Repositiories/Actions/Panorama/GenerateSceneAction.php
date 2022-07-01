@@ -1,11 +1,10 @@
 <?php
 
 
-namespace Bboyyue\Asset\Repositiories\Services\Panorama;
+namespace Bboyyue\Asset\Repositiories\Actions\Panorama;
 
 
 use Bboyyue\Asset\Model\Asset;
-use Bboyyue\Asset\Repositiories\Interfaces\AssetServiceInterface;
 use Bboyyue\Asset\Util\KrpanoUtil;
 use Bboyyue\Asset\Util\RedisUtil;
 use Bboyyue\Filesystem\Enum\FilesystemDataTypeEnum;
@@ -13,20 +12,11 @@ use Bboyyue\Filesystem\Enum\FilesystemTypeEnum;
 use Bboyyue\Filesystem\Model\FilesystemModel;
 use Illuminate\Support\Str;
 
-class GeneratePanoramaService implements AssetServiceInterface
+class GenerateSceneAction
 {
-    /**
-     * 全景生成器
-     * 通过一个 jpg 文件生成
-     * tile 文件
-     * xml 文件
-     * thumb 缩略图文件
-     * 这个服务是跑在线程池里面的, 所以不用纠结运行时间的问题
-     */
     static function run($message, $workerId)
     {
-
-        $asset = Asset::find($message['id']);
+        $asset =  Asset::find($message['id']);
         echo __CLASS__ . " ". $asset->id. " 开始! \t\n";
         $jpg =  $asset->listFilesystem(FilesystemTypeEnum::DATA, 'jpg', ['use_type' => FilesystemDataTypeEnum::PANORAMA_IMG])->first();
         if(!$jpg){
@@ -46,6 +36,11 @@ class GeneratePanoramaService implements AssetServiceInterface
         $xmlPath = $dir."/".$name.'.xml';
         $small = $dir."/small.jpg";
         $tile = $dir."/".$name.'.tiles';
+//        $asset->addFilesystemData($small, [
+//            'use_type' => FilesystemDataTypeEnum::PANORAMA_THUMB_IMG,
+//            'extension' => 'jpg',
+//            'type' => FilesystemTypeEnum::DATA
+//        ]);
 
         if(is_file($small)){
             $asset->addFilesystemData($small, ['use_type' => FilesystemDataTypeEnum::PANORAMA_THUMB_IMG]);

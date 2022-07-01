@@ -99,8 +99,8 @@ class AssetDaemonCommand extends Command
         /**
          * 获取当前正在进行的任务数量, 如果小于最大处理条数的话, 就将 waiting 最后一项移到处理中
          */
-
         $len = Redis::llen(config('bboyyue-asset.redis.pending'));
+
         for ($i = 0; $i < 3 - $len; $i++) {
             if (Redis::llen(config('bboyyue-asset.redis.waiting')) > 0) {
                 if (3 - $len > 0) {

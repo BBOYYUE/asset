@@ -3,6 +3,10 @@
 
 namespace Bboyyue\Asset\Commands;
 
+use Bboyyue\Asset\Enum\ResourceMethodTypeEnum;
+use Bboyyue\Asset\Enum\ResourceTypeEnum;
+use Bboyyue\Asset\Repositiories\Actions\Common\UpdateDocumentAction;
+use Bboyyue\Asset\Repositiories\Actions\Panorama\GenerateSceneAction;
 use Exception;
 use Illuminate\Console\Command;
 use Swoole\Process\Manager;
@@ -60,11 +64,29 @@ class AssetListenCommand extends Command
         $pool->on("Message", function ($pool, $message) use ($host, $port, $service) {
             echo "进程 ". $pool->workerId . ':'.$message . "\t\n";
             $json = json_decode($message, true);
+
+            /*
+             * todo 这里正在重构
+             */
+
+
             if($message && count($json) > 0 && isset($json['work_type']) && isset($json['method'])){
-                $methods = $service[$json['work_type']];
-                $method = $methods[$json['method']];
-                $impl = $method[$json['asset_type']];
-                return $impl::run($json, $pool->workerId);
+                $work_type = $json['work_type'];
+                $method = $json['method'];
+                $asset_type =  $json['asset_type'];
+                switch ($method){
+                    case ResourceMethodTypeEnum::GENERATE_SCENE:
+                        GenerateSceneAction::run($json, $pool->workerId);
+                        break;
+                    case ResourceMethodTypeEnum::UPDATE_DOCUMENT:
+                        UpdateDocumentAction::run($json, $pool->workerId);
+                        break;
+                }
+
+
+//                $impl = $method[$json['asset_type']];
+
+//                return $impl::run($json, $pool->workerId);
             }
         });
         $pool->listen($host, $port);
