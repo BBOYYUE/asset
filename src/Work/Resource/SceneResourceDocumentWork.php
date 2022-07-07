@@ -54,7 +54,7 @@ class SceneResourceDocumentWork implements AssetWorkInterface
              * 如果有 xml, 会把xml读出来然后赋值到 krpano 键
              */
             if ($xml && $xml->linePath(ResourceMethodTypeEnum::GENERATE_SCENE)) {
-                $data['krpano'] = file_get_contents('http://192.168.10.10:9000/' . $xml->linePath());
+                $data['krpano'] = file_get_contents('http://192.168.10.10:9000/alpha-api/' . $xml->linePath());
             }
             $nextSceneList[] = $data;
         }
