@@ -33,10 +33,12 @@ class SceneResourceDocumentWork implements AssetWorkInterface
             $pano = null;
             $xml = null;
             foreach ($file as $v) {
-                if ($v->use_type == FilesystemDataTypeEnum::PANORAMA_IMG) {
+                if ($v->use_type == FilesystemDataTypeEnum::PANORAMA_TILES) {
                     $pano = $v;
                 } elseif ($v->use_type == FilesystemDataTypeEnum::PANORAMA_XML) {
                     $xml = $v;
+                } elseif ($v->use_type == FilesystemDataTypeEnum::PANORAMA_THUMB_IMG){
+                    $thumb = $v;
                 }
             }
             /**
@@ -46,7 +48,8 @@ class SceneResourceDocumentWork implements AssetWorkInterface
                 'id' => $val->id,
                 'name' => $val->name,
                 'uuid' => $val->uuid,
-                'thumb' => $pano ? $pano->linePath() : '',
+                'thumb' => $thumb ? $thumb->linePath() : '',
+                'tile' => $pano ? $thumb->linePath(): '',
                 'xml' => $xml ? $xml->linePath() : '',
             ];
 
