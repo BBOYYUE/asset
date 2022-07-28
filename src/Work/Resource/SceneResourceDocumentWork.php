@@ -22,10 +22,13 @@ class SceneResourceDocumentWork implements AssetWorkInterface
      */
     public function handle($content, Closure $next)
     {
-        $sceneObject = Asset::where('parent_id', $content['id'])->get();
+        $sceneObject = Asset::where([
+            ['parent_id','=', $content['id']],
+            ['asset_type', '=', AssetTypeEnum::ASSET],
+            ['resource_type', '=', ResourceTypeEnum::SCENE]
+        ])->get();
         $nextSceneList = [];
         foreach ($sceneObject as $val) {
-            if ($val->asset_type != AssetTypeEnum::ASSET && $val->resource_type != ResourceTypeEnum::SCENE) continue;
             /**
              * 获取场景资源绑定的文件
              */
@@ -48,9 +51,9 @@ class SceneResourceDocumentWork implements AssetWorkInterface
                 'id' => $val->id,
                 'name' => $val->name,
                 'uuid' => $val->uuid,
-                'thumb' => $thumb ? $thumb->linePath() : '',
-                'tile' => $pano ? $thumb->linePath(): '',
-                'xml' => $xml ? $xml->linePath() : '',
+                'thumb' => isset($thumb) ? $thumb->linePath() : '',
+                'tile' => isset($pano) ? $pano->linePath(): '',
+                'xml' => isset($xml) ? $xml->linePath() : '',
             ];
 
             /**

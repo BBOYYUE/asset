@@ -12,7 +12,9 @@ use Bboyyue\Asset\Model\MongoDb\ResourceModel;
 use Bboyyue\Asset\Repositiories\Facades\Asset;
 use Bboyyue\Asset\Util\RedisUtil;
 use Bboyyue\Asset\Work\Resource\FileResourceDocumentWork;
+use Bboyyue\Asset\Work\Resource\SceneAngleResourceDocumentWork;
 use Bboyyue\Asset\Work\Resource\SceneResourceDocumentWork;
+use Bboyyue\Filesystem\Enum\FilesystemDataTypeEnum;
 use Bboyyue\Filesystem\Enum\FilesystemTypeEnum;
 use Bboyyue\Filesystem\Model\FilesystemModel;
 use Illuminate\Pipeline\Pipeline;
@@ -27,14 +29,78 @@ trait AssetModelTrait
         return $this;
     }
 
-    function addResource($type, $name, $file_uuid)
+    function addResource($type, $name, $data)
     {
         switch ($type) {
+            case ResourceTypeEnum::SCENE_ANGLE:
+                $this->addResourceSceneAngel($name, $data);
+                break;
             case ResourceTypeEnum::SCENE:
             default:
-                $this->addResourceScene($name, $file_uuid);
+                $this->addResourceScene($name, $data);
 
         }
+    }
+    function updateResource($type, $data)
+    {
+        switch ($type){
+            case ResourceTypeEnum::SCENE:
+            default:
+                $this->updateResourceScene($data);
+        }
+        $this->updateResourceDocument(ResourceTypeEnum::SCENE);
+    }
+
+    function updateResourceScene($data){
+        $asset = \Bboyyue\Asset\Model\Asset::where('uuid', $data['asset_uuid'])->first();
+        $oldFile = $asset->listFilesystemData();
+        $canUpdateFile = true;
+        foreach ($oldFile as $val){
+            if($val->uuid == $data['file_uuid']) $canUpdateFile = false;
+        }
+        /**
+         * 如果更换了全景图, 那么就要重新生成全景
+         */
+        if($canUpdateFile && $data['file_uuid']) {
+            $file = FilesystemModel::where([
+                ['uuid', '=', $data['file_uuid']],
+                ['type', '=', FilesystemTypeEnum::DATA]
+            ])->first();
+            /**
+             * 这里有个逻辑 就是只有作品资源才会绑定实体文件,
+             * 作品下的资源都是绑定的作品下文件的软连接
+             * 所以这里调用 removeFilesystemLink() 删除软链接绑定, 不删除源文件
+             */
+//            $asset->removeFilesystemLink();
+            $asset->removeFilesWhere([
+                ['use_type', 'in' , [1, 2, 3]]
+            ]);
+            $asset->addFilesystemLink(
+                $data['name'],
+                null,
+                $file
+            );
+            $asset->generate(ResourceMethodTypeEnum::UPDATE_SCENE);
+
+        }else{
+            $this->updateResourceDocument(ResourceTypeEnum::SCENE);
+        }
+    }
+    function addResourceSceneAngel($name, $data)
+    {
+        /**
+         * 创建角度资源
+         */
+        $asset = Asset::createAsset(
+            $name,
+            WorkTypeEnum::PANORAMA,
+            AssetTypeEnum::ASSET,
+            $this->user_id,
+            $data,
+            ResourceTypeEnum::SCENE_ANGLE
+        )->bindFilesystemDir();
+        $this->addAsset($asset);
+        $this->updateResourceDocument(ResourceTypeEnum::SCENE_ANGLE);
     }
 
     function addResourceScene($name, $file_uuid)
@@ -55,7 +121,8 @@ trait AssetModelTrait
          */
         $file =  FilesystemModel::where([
             ['uuid', '=', $file_uuid],
-            ['type', '=', FilesystemTypeEnum::DATA]
+            ['type', '=', FilesystemTypeEnum::DATA],
+            ['use_type', '=' , FilesystemDataTypeEnum::PANORAMA_IMG]
         ])->first();
         $asset->addFilesystemLink(
             $name,
@@ -67,7 +134,7 @@ trait AssetModelTrait
          * 全景资源的生成操作
          */
         $asset->generate(ResourceMethodTypeEnum::GENERATE_SCENE);
-        $this->updateResourceDocument(ResourceTypeEnum::SCENE);
+//        $this->updateResourceDocument(ResourceTypeEnum::SCENE);
     }
 
     function remove($asset)
@@ -97,6 +164,7 @@ trait AssetModelTrait
 
         // TODO: Implement setChildAssetSort() method.
     }
+
 
     function removeChildAsset($child)
     {
@@ -150,10 +218,10 @@ trait AssetModelTrait
                  * 全景资源的document的生成操作
                  */
                 SceneResourceDocumentWork::class,
-                FileResourceDocumentWork::class
+                FileResourceDocumentWork::class,
+                SceneAngleResourceDocumentWork::class
             ])
             ->then(function ($content) use ($needInit) {
-
                 if ($needInit) {
                     ResourceModel::create(['resource' => $content]);
                 } else {

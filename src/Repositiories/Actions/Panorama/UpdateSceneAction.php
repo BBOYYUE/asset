@@ -14,7 +14,7 @@ use Bboyyue\Filesystem\Enum\FilesystemTypeEnum;
 use Bboyyue\Filesystem\Model\FilesystemModel;
 use Illuminate\Support\Str;
 
-class GenerateSceneAction
+class UpdateSceneAction
 {
     static function run($message, $workerId)
     {
@@ -26,6 +26,8 @@ class GenerateSceneAction
                 $link = $asset->listFilesystem(FilesystemTypeEnum::LINK, 'jpg', ['use_type' => FilesystemDataTypeEnum::PANORAMA_IMG])->first();
                 $jpg = FilesystemModel::where('uuid', $link->uuid)->first();
             }
+
+            $xml =  $asset->listFilesystem(FilesystemTypeEnum::DATA, 'xml', ['use_type' => FilesystemDataTypeEnum::PANORAMA_XML])->first();
             RedisUtil::setProgress($asset->id, 10);
             echo $jpg->localPath() . "\r\n";
             echo "正在生成全景 \r\n";
@@ -40,7 +42,7 @@ class GenerateSceneAction
              */
             $dir = Str::beforeLast($jpg->localPath(), '.');
             $name = Str::beforeLast($jpg->alias, '.');
-            $xmlPath = $dir . "/" . $name . '.xml';
+            $xmlPath = $xml->localPath();
             $small = $dir . "/small.jpg";
             $tile = $dir . "/" . $name . '.tiles';
 
@@ -64,16 +66,23 @@ class GenerateSceneAction
                 sleep(3);
                 $time++;
             } while ((!$tile || !isset($tilePath)) && $time < 10);
+            /**
+             * 更新场景就不替换 xml 文件了.
+             */
 
-            echo "修改 xml 文件 \r\n";
-            KrpanoUtil::setPanoramaTilesPath($xmlPath, $tilePath);
+//            echo "修改 xml 文件 \r\n";
+            KrpanoUtil::updatePanoramaTilesPath($xmlPath, $tilePath);
             KrpanoUtil::setPanoramaNameAndTitle($xmlPath, $asset->alias);
-            echo "更新缓存文档 \r\n";
-            KrpanoUtil::savePanoramaDocument($xmlPath, $asset->uuid);
+            echo $xmlPath;
             if (is_file($xmlPath)) {
                 $asset->addFilesystemData($xmlPath, ['use_type' => FilesystemDataTypeEnum::PANORAMA_XML]);
             }
-
+            /**
+             * 移除了旧的xml文件
+             */
+            $xml->delete();
+            echo "更新缓存文档 \r\n";
+            KrpanoUtil::savePanoramaDocument($xmlPath, $asset->uuid);
             if ($asset->asset_type == AssetTypeEnum::ASSET) {
                 $parent = Asset::where('id', $asset->parent_id)->first();
                 $parent->updateResourceDocument(ResourceTypeEnum::SCENE);

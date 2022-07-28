@@ -7,6 +7,7 @@ use Bboyyue\Asset\Enum\ResourceMethodTypeEnum;
 use Bboyyue\Asset\Enum\ResourceTypeEnum;
 use Bboyyue\Asset\Repositiories\Actions\Common\UpdateDocumentAction;
 use Bboyyue\Asset\Repositiories\Actions\Panorama\GenerateSceneAction;
+use Bboyyue\Asset\Repositiories\Actions\Panorama\UpdateSceneAction;
 use Exception;
 use Illuminate\Console\Command;
 use Swoole\Process\Manager;
@@ -80,6 +81,9 @@ class AssetListenCommand extends Command
                         break;
                     case ResourceMethodTypeEnum::UPDATE_DOCUMENT:
                         UpdateDocumentAction::run($json, $pool->workerId);
+                        break;
+                    case ResourceMethodTypeEnum::UPDATE_SCENE:
+                        UpdateSceneAction::run($json, $pool->workerId);
                         break;
                 }
 

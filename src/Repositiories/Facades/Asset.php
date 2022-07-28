@@ -19,6 +19,7 @@ class Asset implements AssetFacadeInterface
         $asset->option = json_encode($option);
         $asset->work_type = $work_type;
         $asset->asset_type = $asset_type;
+        $asset->resource_type = $resource_type;
         $asset->status = 0;
         $asset->uuid = $uuid;
         $asset->user_id = $user_id;
